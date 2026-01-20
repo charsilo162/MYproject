@@ -18,7 +18,7 @@ class LoginController extends Controller
     {
         $request->authenticate();
         $user = $request->user();
-        $token = $request->createToken('main')->plainTextToken;
+        $token = $user->createToken('main')->plainTextToken;
 
         return [
             'user' => new USerResource($user),
@@ -31,12 +31,8 @@ class LoginController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
+       $user = $request->user();
+       $user->currentAccessToken()->delete();
         return response()->noContent();
     }
 }
